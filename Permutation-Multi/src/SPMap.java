@@ -1,0 +1,162 @@
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Scanner;
+
+public class SPMap{
+	public HashMap<String,Integer> nameToNumber;
+	public Path[][] path;
+	public Path multiBest;
+	public String[] numberToName;
+	long debugCount, debugTime;
+	static int interchangeTime;
+
+	public SPMap(File db) throws FileNotFoundException{
+		Scanner scn=new Scanner(new BufferedInputStream(new FileInputStream(db)));
+		int n=scn.nextInt();
+		interchangeTime=scn.nextInt();
+		nameToNumber=new HashMap<>(n*2);
+		path=new Path[n][n];
+		numberToName=new String[n];
+		for (int i=0;i!=n;++i)
+			for (int j=0;j!=n;++j)
+				path[i][j]=new Path();
+		scn.nextLine();
+		for (int i=0;i!=n;++i){
+			numberToName[i]=scn.nextLine();
+			nameToNumber.put(numberToName[i],i);
+		}
+		for (int i=0;i!=n;++i)
+			for (int j=0;j!=n;++j){
+				Path pij=path[i][j];
+				pij.time=scn.nextInt();
+				pij.interchange=scn.nextInt();
+				int t=scn.nextInt();
+				scn.nextLine();
+				for (int x=0;x!=t;++x){
+					int startLine=scn.nextInt(), stopLine=scn.nextInt();
+					scn.nextLine();
+					String startLineUID=scn.nextLine(), stopLineUID=scn.nextLine();
+					boolean isStartSlaveLine=scn.nextBoolean(), isStopSlaveLine=scn.nextBoolean();
+					scn.nextLine();
+					String route=scn.nextLine();
+					pij.routes.add(new Route(startLine,stopLine,startLineUID,stopLineUID,isStartSlaveLine,isStopSlaveLine,route));
+				}
+			}
+	}
+
+	public Path getPath(String[] stations){
+		for (String i:stations)
+			if (!nameToNumber.containsKey(i))
+				throw new StationNotFoundException(i);
+		if (stations.length==2)
+			return getPath(stations[0], stations[1]);
+		else if (stations.length>2){
+			multiBest=new Path();
+			debugTime=System.currentTimeMillis();
+			permutation(stations, 1, stations.length-2);
+			return multiBest;
+		}
+		else throw new RuntimeException("Too few stations.");
+	}
+
+	public Path getPath(String src, String dst){
+		return path[nameToNumber.get(src)][nameToNumber.get(dst)];
+	}
+
+	public Path getMultiPathPerm(String[] stations){
+		Path t=getPath(stations[0], stations[1]);
+		if (stations.length<3) throw new RuntimeException("Too few stations.");
+		int preTimeCount=t.time;
+		for (int i=2;i!=stations.length;++i)
+			preTimeCount+=getPath(stations[i-1], stations[i]).time+interchangeTime;
+		if (preTimeCount>multiBest.time) return null;
+		for (int i=2;i!=stations.length;++i){
+			t=t.appendNew(getPath(stations[i-1], stations[i]));
+		}
+		if (t.time<multiBest.time || (t.time==multiBest.time && t.interchange<multiBest.interchange)){
+			multiBest=t;
+		}
+		else if (t.time==multiBest.time && t.interchange==multiBest.interchange)
+			multiBest.routes.addAll(t.routes);
+		return multiBest;
+
+		/*int[] compress=new int[middleStation.length+2];
+		compress[0]=nameToNumber.get(src);
+		compress[middleStation.length+1]=nameToNumber.get(dst);
+		MultiPath mp=new MultiPath();
+		int b_src=0;
+		int b_dst=middleStation.length+1;
+		for (int i=0;i!=middleStation.length;++i){
+			compress[i+1]=nameToNumber.get(middleStation[i]);
+			mp.middleState|=1<<(i+1);
+		}
+		HashSet[][] dataLog=new HashSet[middleStation.length+2][middleStation.length+2];
+		for (int i=0;i!=dataLog.length;++i)
+			for (int j=0;j!=dataLog.length;++j)
+				dataLog[i][j]=new HashSet<MultiPath>();
+		for (int i=0;i!=middleStation.length;++i){
+			MultiPath tmp=new MultiPath(mp.middleState);
+			//if (dataLog[b_src][b_dst].contains(new MultiPath(b_)));//TODO
+		}
+		return null;*/
+	}
+
+	public MultiPath getMultiPathBin(int b_src, int b_dst, int b_middleState, int[] compress, HashSet<MultiPath> dataLog){
+		return null;//TODO
+	}
+
+	private class MultiPath extends Path{
+		public MultiPath(){}
+		public MultiPath(int b_middleState){this.middleState=b_middleState;}
+
+		int middleState=0;
+		Path path=null;
+		public boolean isVisited(int compressedNum){return (middleState&(1<<compressedNum))!=0;}
+
+		@Override
+		public boolean equals(Object o){
+			if (this==o) return true;
+			if (o==null || getClass()!=o.getClass()) return false;
+
+			MultiPath multiPath=(MultiPath)o;
+			if (middleState!=multiPath.middleState) return false;
+			return true;
+		}
+
+		@Override
+		public int hashCode(){
+			return middleState;
+		}
+	}
+
+	public void permutation(String[] str, int first, int last){
+		if(first == last) {
+			++debugCount;
+			if (System.currentTimeMillis()-debugTime>1000){
+				debugTime=System.currentTimeMillis();
+				System.out.print(""+(new DecimalFormat("0.000").format((double)debugCount/(6227020800L)*100))+"% ");
+				for (String i:str) System.out.print(i+" ");
+				System.out.println();
+			}
+			getMultiPathPerm(str);
+		}
+
+		for(int i = first; i <= last ; i++) {
+			swap(str, i, first);
+			permutation(str, first+1, last);
+			swap(str, i, first);
+		}
+	}
+
+	private void swap(String[] str, int i, int first) {
+		String tmp;
+		tmp = str[first];
+		str[first] = str[i];
+		str[i] = tmp;
+	}
+}

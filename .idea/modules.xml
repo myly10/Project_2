@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Permutation-Multi/Permutation-Multi.iml" filepath="$PROJECT_DIR$/Permutation-Multi/Permutation-Multi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Project_2.iml" filepath="$PROJECT_DIR$/Project_2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SPGenerator/SPGenerator.iml" filepath="$PROJECT_DIR$/SPGenerator/SPGenerator.iml" />
+    </modules>
+  </component>
+</project>
