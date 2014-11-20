@@ -6,18 +6,11 @@ public class Path{
 
 	public Path appendNew(Path p){
 		Path t=new Path();
-		t.interchange=(int)3e6;
+		t.interchange=interchange+p.interchange+1;
 		t.time=time+p.time;
 		for (Route i:routes)
-			for (Route j:p.routes){
-				if (interchange+p.interchange+1<t.interchange){
-					t.interchange=interchange+p.interchange+1;
-					t.routes.clear();
-					t.routes.add(new Route(i,j));
-				}
-				else if (interchange+p.interchange+1==t.interchange)
-					t.routes.add(new Route(i,j));
-			}
+			for (Route j:p.routes)
+				t.routes.add(new Route(i,j));
 		return t;
 	}
 }

@@ -54,7 +54,7 @@ public class SPMap{
 			return path[nameToNumber.get(stations[0])][nameToNumber.get(stations[1])];
 		else if (stations.length>2){
 			debugTime=System.currentTimeMillis();
-			return new MultiPath(stations);
+			return new MultiPath(stations, ~(-1<<stations.length));
 		}
 		else throw new RuntimeException("Too few stations.");
 	}
@@ -64,12 +64,17 @@ public class SPMap{
 		int stationCount, src, dst;
 		int[] stationIndexToNum;
 
-		public MultiPath(String[] stations){
-			HashMap<Integer, MultiPath> dp=new HashMap<>(stationCount*stationCount*2);
+		public MultiPath(String[] stations, int middleState){
+			HashMap<Long, MultiPath> dp=new HashMap<>(stationCount*stationCount*2);
 			stationCount=stations.length;
 			if (stationCount>31) throw new RuntimeException("Too many stations.");
 			stationIndexToNum=new int[stationCount];
 			for (int i=0;i!=stationCount;++i) stationIndexToNum[i]=nameToNumber.get(stations[i]);
+			for (int s=0;s!=stationCount;++s)
+				for (int d=s+1;d!=stationCount;++d){
+					MultiPath t=new MultiPath(stations, (1<<))
+					dp.put()
+				}
 			for (int c=2;c!=stationCount;++c){
 				for (int s=1;s!=stationCount-1;++s)
 					for (int d=1;d!=stationCount-1;++d){
@@ -79,23 +84,42 @@ public class SPMap{
 			}
 		}
 
-		public void permutation(int middleStatus, int first, int last, int c, int s, int d, int depth){
-			if(first == last || depth==c) {
+		public void permutation(int middleStatus, int first, int last, int c, int s, int d, int depth, HashMap<Long, MultiPath> dp){
+			if(first==last || depth==c){
 				//TODO
 			}
 
-			for(int i = first; i <= last ; i++) {
-				permutation(swap(middleStatus, i, first), first+1, last, c, s, d, depth+1);
+			for(int i=first;i<=last;i++){
+				permutation(mark(middleStatus, i), first+1, last, c, s, d, depth+1, dp);
 			}
 		}
 
-		private int swap(int str, int i, int first) {
-			return str^((1<<i)|(1<<first));
+		private int mark(int str, int i) {
+			return str|(1<<i);
 		}
 
 		@Override
 		public int hashCode(){
-			return Long.valueOf(((src<<9)|(dst<<9)|middleState)>>32).hashCode();
+			return Long.valueOf((((((long)src<<9)|(dst<<9))<<64-18)|middleState)>>32).hashCode();
+		}
+
+		public Long toLongKey(){return (((((long)src<<9)|(dst<<9))<<(64-18))|middleState);}
+
+		public MultiPath connect(String[] stations){
+			MultiPath t=new MultiPath();
+			t.interchange=(int)3e6;
+			t.time=time+p.time;
+			for (Route i:routes)
+				for (Route j:p.routes){
+					if (interchange+p.interchange+1<t.interchange){
+						t.interchange=interchange+p.interchange+1;
+						t.routes.clear();
+						t.routes.add(new Route(i,j));
+					}
+					else if (interchange+p.interchange+1==t.interchange)
+						t.routes.add(new Route(i,j));
+				}
+			return t;
 		}
 	}
 }
