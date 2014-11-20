@@ -90,8 +90,7 @@ public class SPMap{
 		}
 
 		private int swap(int str, int i, int first) {
-			int tmp=(1<<i)|(1<<first);
-			return str^tmp;
+			return str^((1<<i)|(1<<first));
 		}
 
 		@Override
