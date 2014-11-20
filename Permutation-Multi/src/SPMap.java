@@ -13,12 +13,10 @@ public class SPMap{
 	public Path multiBest;
 	public String[] numberToName;
 	long debugCount, debugTime;
-	static int interchangeTime;
 
 	public SPMap(File db) throws FileNotFoundException{
 		Scanner scn=new Scanner(new BufferedInputStream(new FileInputStream(db)));
 		int n=scn.nextInt();
-		interchangeTime=scn.nextInt();
 		nameToNumber=new HashMap<>(n*2);
 		path=new Path[n][n];
 		numberToName=new String[n];
@@ -38,13 +36,8 @@ public class SPMap{
 				int t=scn.nextInt();
 				scn.nextLine();
 				for (int x=0;x!=t;++x){
-					int startLine=scn.nextInt(), stopLine=scn.nextInt();
-					scn.nextLine();
-					String startLineUID=scn.nextLine(), stopLineUID=scn.nextLine();
-					boolean isStartSlaveLine=scn.nextBoolean(), isStopSlaveLine=scn.nextBoolean();
-					scn.nextLine();
 					String route=scn.nextLine();
-					pij.routes.add(new Route(startLine,stopLine,startLineUID,stopLineUID,isStartSlaveLine,isStopSlaveLine,route));
+					pij.routes.add(new Route(route));
 				}
 			}
 	}
@@ -73,7 +66,7 @@ public class SPMap{
 		if (stations.length<3) throw new RuntimeException("Too few stations.");
 		int preTimeCount=t.time;
 		for (int i=2;i!=stations.length;++i)
-			preTimeCount+=getPath(stations[i-1], stations[i]).time+interchangeTime;
+			preTimeCount+=getPath(stations[i-1], stations[i]).time;
 		if (preTimeCount>multiBest.time) return null;
 		for (int i=2;i!=stations.length;++i){
 			t=t.appendNew(getPath(stations[i-1], stations[i]));
@@ -84,54 +77,6 @@ public class SPMap{
 		else if (t.time==multiBest.time && t.interchange==multiBest.interchange)
 			multiBest.routes.addAll(t.routes);
 		return multiBest;
-
-		/*int[] compress=new int[middleStation.length+2];
-		compress[0]=nameToNumber.get(src);
-		compress[middleStation.length+1]=nameToNumber.get(dst);
-		MultiPath mp=new MultiPath();
-		int b_src=0;
-		int b_dst=middleStation.length+1;
-		for (int i=0;i!=middleStation.length;++i){
-			compress[i+1]=nameToNumber.get(middleStation[i]);
-			mp.middleState|=1<<(i+1);
-		}
-		HashSet[][] dataLog=new HashSet[middleStation.length+2][middleStation.length+2];
-		for (int i=0;i!=dataLog.length;++i)
-			for (int j=0;j!=dataLog.length;++j)
-				dataLog[i][j]=new HashSet<MultiPath>();
-		for (int i=0;i!=middleStation.length;++i){
-			MultiPath tmp=new MultiPath(mp.middleState);
-			//if (dataLog[b_src][b_dst].contains(new MultiPath(b_)));//TODO
-		}
-		return null;*/
-	}
-
-	public MultiPath getMultiPathBin(int b_src, int b_dst, int b_middleState, int[] compress, HashSet<MultiPath> dataLog){
-		return null;//TODO
-	}
-
-	private class MultiPath extends Path{
-		public MultiPath(){}
-		public MultiPath(int b_middleState){this.middleState=b_middleState;}
-
-		int middleState=0;
-		Path path=null;
-		public boolean isVisited(int compressedNum){return (middleState&(1<<compressedNum))!=0;}
-
-		@Override
-		public boolean equals(Object o){
-			if (this==o) return true;
-			if (o==null || getClass()!=o.getClass()) return false;
-
-			MultiPath multiPath=(MultiPath)o;
-			if (middleState!=multiPath.middleState) return false;
-			return true;
-		}
-
-		@Override
-		public int hashCode(){
-			return middleState;
-		}
 	}
 
 	public void permutation(String[] str, int first, int last){

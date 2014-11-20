@@ -29,7 +29,7 @@ public class Route{
 
 	@Override
 	public String toString(){
-		return startLine+"\n"+stopLine+"\n"+startLineUID+"\n"+stopLineUID+"\n"+isStartSlaveLine+"\n"+isStopSlaveLine+"\n"+startStation+"-Line "+startLine+"-"+route+"\n";
+		return startStation+"-Line "+startLine+"-"+route+"\n";
 	}
 
 	@Override
