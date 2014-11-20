@@ -9,13 +9,11 @@ public class SPMap{
 	public HashMap<String,Integer> nameToNumber;
 	public Path[][] path;
 	public String[] numberToName;
-	long debugCount, debugTime;
-	static int interchangeTime;
+	long debugTime;
 
 	public SPMap(File db) throws FileNotFoundException{
 		Scanner scn=new Scanner(new BufferedInputStream(new FileInputStream(db)));
 		int n=scn.nextInt();
-		interchangeTime=scn.nextInt();
 		nameToNumber=new HashMap<>(n*2);
 		path=new Path[n][n];
 		numberToName=new String[n];
@@ -35,13 +33,8 @@ public class SPMap{
 				int t=scn.nextInt();
 				scn.nextLine();
 				for (int x=0;x!=t;++x){
-					int startLine=scn.nextInt(), stopLine=scn.nextInt();
-					scn.nextLine();
-					String startLineUID=scn.nextLine(), stopLineUID=scn.nextLine();
-					boolean isStartSlaveLine=scn.nextBoolean(), isStopSlaveLine=scn.nextBoolean();
-					scn.nextLine();
 					String route=scn.nextLine();
-					pij.routes.add(new Route(startLine,stopLine,startLineUID,stopLineUID,isStartSlaveLine,isStopSlaveLine,route));
+					pij.routes.add(new Route(route));
 				}
 			}
 	}
@@ -72,7 +65,7 @@ public class SPMap{
 			for (int i=0;i!=stationCount;++i) stationIndexToNum[i]=nameToNumber.get(stations[i]);
 			for (int s=0;s!=stationCount;++s)
 				for (int d=s+1;d!=stationCount;++d){
-					MultiPath t=new MultiPath(stations, (1<<))
+					MultiPath t=new MultiPath(stations, (1<<));
 					dp.put()
 				}
 			for (int c=2;c!=stationCount;++c){
@@ -107,18 +100,13 @@ public class SPMap{
 
 		public MultiPath connect(String[] stations){
 			MultiPath t=new MultiPath();
-			t.interchange=(int)3e6;
-			t.time=time+p.time;
+			for (int i=1;i!=stations.length;++i){
+
+			}
+
 			for (Route i:routes)
-				for (Route j:p.routes){
-					if (interchange+p.interchange+1<t.interchange){
-						t.interchange=interchange+p.interchange+1;
-						t.routes.clear();
-						t.routes.add(new Route(i,j));
-					}
-					else if (interchange+p.interchange+1==t.interchange)
-						t.routes.add(new Route(i,j));
-				}
+				for (Route j:p.routes)
+					t.routes.add(new Route(i,j));
 			return t;
 		}
 	}
