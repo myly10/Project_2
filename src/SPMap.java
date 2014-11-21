@@ -47,67 +47,64 @@ public class SPMap{
 			return path[nameToNumber.get(stations[0])][nameToNumber.get(stations[1])];
 		else if (stations.length>2){
 			debugTime=System.currentTimeMillis();
-			return new MultiPath(stations, ~(-1<<stations.length));
+			return getMultiPath(stations);
 		}
 		else throw new RuntimeException("Too few stations.");
 	}
 
-	private class MultiPath extends Path{
-		long middleState=0;
-		int stationCount, src, dst;
-		int[] stationIndexToNum;
-
-		public MultiPath(String[] stations, int middleState){
-			HashMap<Long, MultiPath> dp=new HashMap<>(stationCount*stationCount*2);
-			stationCount=stations.length;
-			if (stationCount>31) throw new RuntimeException("Too many stations.");
-			stationIndexToNum=new int[stationCount];
-			for (int i=0;i!=stationCount;++i) stationIndexToNum[i]=nameToNumber.get(stations[i]);
-			for (int s=0;s!=stationCount;++s)
-				for (int d=s+1;d!=stationCount;++d){
-					MultiPath t=new MultiPath(stations, (1<<));
-					dp.put()
+	public Path getMultiPath(String[] stations){
+		int stationCount=stations.length;
+		int[] stationIndexToNum=new int[stationCount];
+		for (int i=0;i!=stationCount;++i) stationIndexToNum[i]=nameToNumber.get(stations[i]);
+		Path[][] dp=new Path[1<<stationCount][stationCount];
+		for (Path[] i:dp)
+			for (Path j:i)
+				j=null;
+		for (int i=0;i!=stationCount;++i)
+			dp[1|(1<<i)][i]=path[stationIndexToNum[0]][stationIndexToNum[i]];
+		if (stationCount>31) throw new RuntimeException("Too many stations.");
+		stationIndexToNum=new int[stationCount];
+		for (int state=3, limit=(1<<(stationCount-1))-1;state<limit;++state){
+			for (int p=findNextTrueBit(state, 0);p<stationCount;p=findNextTrueBit(state, p))
+				for (int exit=findNextFalseBit(state, 0);exit<stationCount;exit=findNextFalseBit(state, exit)){
+					if (dp[state|(1<<exit)][exit]==null)
+						dp[state|(1<<exit)][exit]=connect(dp[state][p], path[stationIndexToNum[p]][stationIndexToNum[exit]]);
+					else if (dp[state|(1<<exit)][exit].time>dp[state][p].time+path[stationIndexToNum[p]][stationIndexToNum[exit]].time)
+						dp[state|(1<<exit)][exit]=connect(dp[state][p], path[stationIndexToNum[p]][stationIndexToNum[exit]]);
+					else if (dp[state|(1<<exit)][exit].time==dp[state][p].time+path[stationIndexToNum[p]][stationIndexToNum[exit]].time)
+						dp[state|(1<<exit)][exit].routes.addAll(connect(dp[state][p], path[stationIndexToNum[p]][stationIndexToNum[exit]]).routes);
 				}
-			for (int c=2;c!=stationCount;++c){
-				for (int s=1;s!=stationCount-1;++s)
-					for (int d=1;d!=stationCount-1;++d){
-						if (d==s) continue;
-						permutation();
-					}
-			}
 		}
+		return dp[(1<<(stationCount))-1][stationCount-1];
+	}
 
-		public void permutation(int middleStatus, int first, int last, int c, int s, int d, int depth, HashMap<Long, MultiPath> dp){
-			if(first==last || depth==c){
-				//TODO
-			}
-
-			for(int i=first;i<=last;i++){
-				permutation(mark(middleStatus, i), first+1, last, c, s, d, depth+1, dp);
-			}
+	private int findNextFalseBit(int middleState, int p){
+		middleState>>=p;
+		if (middleState==-1) throw new RuntimeException("No other false bit.");
+		while (true){
+			middleState>>=1;
+			++p;
+			if ((middleState&1)==0) return p;
 		}
+	}
 
-		private int mark(int str, int i) {
-			return str|(1<<i);
+	private int findNextTrueBit(int middleState, int p){
+		middleState>>=p;
+		while (middleState!=0){
+			middleState>>=1;
+			++p;
+			if ((middleState&1)==1) return p;
 		}
+		return Integer.MAX_VALUE;
+	}
 
-		@Override
-		public int hashCode(){
-			return Long.valueOf((((((long)src<<9)|(dst<<9))<<64-18)|middleState)>>32).hashCode();
-		}
-
-		public Long toLongKey(){return (((((long)src<<9)|(dst<<9))<<(64-18))|middleState);}
-
-		public MultiPath connect(String[] stations){
-			MultiPath t=new MultiPath();
-			for (int i=1;i!=stations.length;++i){
-
-			}
-
-			for (Route i:routes)
-				for (Route j:p.routes)
-					t.routes.add(new Route(i,j));
-			return t;
-		}
+	public Path connect(Path p, Path n){
+		Path t=new Path();
+		t.interchange=p.interchange+n.interchange+1;
+		t.time=n.time+p.time;
+		for (Route i:p.routes)
+			for (Route j:n.routes)
+				t.routes.add(new Route(i,j));
+		return t;
 	}
 }
