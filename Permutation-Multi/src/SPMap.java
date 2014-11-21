@@ -51,7 +51,7 @@ public class SPMap{
 		else if (stations.length>2){
 			multiBest=new Path();
 			totalCount=1;
-			for (int i=1;i<stations.length;++i) totalCount*=i+1;
+			for (int i=2;i<stations.length-1;++i) totalCount*=i;
 			debugTime=System.currentTimeMillis();
 			permutation(stations, 1, stations.length-2);
 			return multiBest;
