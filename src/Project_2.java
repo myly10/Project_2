@@ -33,6 +33,7 @@ public class Project_2{
 				System.out.println("ERROR: Station "+ex.getMessage()+" doesn't exist.");
 			}catch (RuntimeException ex){
 				System.out.println("ERROR: "+ex.getMessage());
+				ex.printStackTrace();
 			}
 			System.out.println();
 			System.out.print("Stations > ");
