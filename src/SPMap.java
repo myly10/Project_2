@@ -79,6 +79,7 @@ public class SPMap{
 			else if (result.time==dp[prev][i].time+path[stationIndexToNum[i]][stationIndexToNum[exit]].time)
 				result.routes.addAll(connect(dp[prev][i], path[stationIndexToNum[i]][stationIndexToNum[exit]]).routes);
 		}
+		System.gc();
 		return result;
 	}
 
