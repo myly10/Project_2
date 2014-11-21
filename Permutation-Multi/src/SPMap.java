@@ -4,7 +4,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Scanner;
 
 public class SPMap{
@@ -13,6 +12,7 @@ public class SPMap{
 	public Path multiBest;
 	public String[] numberToName;
 	long debugCount, debugTime;
+	long totalCount=1;
 
 	public SPMap(File db) throws FileNotFoundException{
 		Scanner scn=new Scanner(new BufferedInputStream(new FileInputStream(db)));
@@ -50,6 +50,7 @@ public class SPMap{
 			return getPath(stations[0], stations[1]);
 		else if (stations.length>2){
 			multiBest=new Path();
+			for (int i=1;i<stations.length;++i) totalCount*=1+1;
 			debugTime=System.currentTimeMillis();
 			permutation(stations, 1, stations.length-2);
 			return multiBest;
@@ -84,7 +85,7 @@ public class SPMap{
 			++debugCount;
 			if (System.currentTimeMillis()-debugTime>1000){
 				debugTime=System.currentTimeMillis();
-				System.out.print(""+(new DecimalFormat("0.000").format((double)debugCount/(6227020800L)*100))+"% ");
+				System.out.print(""+(new DecimalFormat("0.000").format((double)debugCount/totalCount*100))+"% ");
 				for (String i:str) System.out.print(i+" ");
 				System.out.println();
 			}
