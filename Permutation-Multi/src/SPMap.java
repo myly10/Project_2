@@ -85,9 +85,8 @@ public class SPMap{
 		if(first == last) {
 			++debugCount;
 			if (System.currentTimeMillis()-debugTime>2000){
-				double newProgress=debugCount-prevDebugCount;
 				double estimatedTime=-(debugTime-System.currentTimeMillis())*((1-((double)debugCount/totalCount))/(((double)debugCount-prevDebugCount)/totalCount));
-				System.out.print(""+(new DecimalFormat("0.000000").format((double)debugCount/totalCount*100))+"% ETA: "+(int)(estimatedTime/86400)+"days "+(int)((estimatedTime%86400)/3600)+":"+(int)((estimatedTime%3600)/60)+":"+(int)(estimatedTime%60));
+				System.out.print(""+(new DecimalFormat("0.000000").format((double)debugCount/totalCount*100))+"% ETA: "+(int)(estimatedTime/86400)+"days "+(int)((estimatedTime%86400)/3600)+":"+(int)((estimatedTime%3600)/60)+":"+(int)(estimatedTime%60)+" ");
 				for (String i:str) System.out.print(i+" ");
 				System.out.print("\r");
 				debugTime=System.currentTimeMillis();
