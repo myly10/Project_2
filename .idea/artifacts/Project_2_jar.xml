@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Project_2:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Project_2_jar</output-path>
+    <root id="archive" name="Project_2.jar">
+      <element id="module-output" name="Project_2" />
+      <element id="file-copy" path="$PROJECT_DIR$/SPMap.db" />
+    </root>
+  </artifact>
+</component>

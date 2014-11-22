@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Permutation-Multi:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Permutation_Multi_jar</output-path>
+    <root id="archive" name="Permutation-Multi.jar">
+      <element id="module-output" name="Permutation-Multi" />
+      <element id="file-copy" path="$PROJECT_DIR$/SPMap.db" />
+    </root>
+  </artifact>
+</component>

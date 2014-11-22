@@ -8,9 +8,11 @@ public class SPMapGenerator{
 	File outFile=new File("SPMap.db");
 	FileWriter w;
 	String tempString="";
-	int n=0, interchangeTime=3;
+	int n=0, interchangeTime;
 
-	public SPMapGenerator() throws IOException{
+	public SPMapGenerator(int it) throws IOException{
+		interchangeTime=it;
+		if (interchangeTime<0) throw new RuntimeException("Invalid interchange time.");
 		w=new FileWriter(outFile);
 		for (int i=0;i!=path.length;++i)
 			for (int j=0;j!=path.length;++j)
