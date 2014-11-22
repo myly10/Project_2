@@ -52,7 +52,7 @@ public class SPMap{
 
 	public Path getMultiPath(String[] stations){
 		int stationCount=stations.length;
-		if (stationCount>31) throw new RuntimeException("Too many stations.");
+		if (stationCount>30) throw new RuntimeException("Too many stations.");
 		int[] stationIndexToNum=new int[stations.length];
 		for (int i=0;i!=stations.length;++i) stationIndexToNum[i]=nameToNumber.get(stations[i]);
 		Path[][] dp=new Path[((1<<stations.length)+1)>>1][stations.length];

@@ -65,7 +65,6 @@ public class SPMap{
 
 	public Path getMultiPathPerm(String[] stations){
 		Path t=getPath(stations[0], stations[1]);
-		if (stations.length<3) throw new RuntimeException("Too few stations.");
 		int preTimeCount=t.time;
 		for (int i=2;i!=stations.length;++i)
 			preTimeCount+=getPath(stations[i-1], stations[i]).time;
