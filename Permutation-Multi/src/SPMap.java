@@ -88,7 +88,7 @@ public class SPMap{
 				debugTime=System.currentTimeMillis();
 				System.out.print(""+(new DecimalFormat("0.000000").format((double)debugCount/totalCount*100))+"% ");
 				for (String i:str) System.out.print(i+" ");
-				System.out.println();
+				System.out.print("\r");
 			}
 			getMultiPathPerm(str);
 		}
