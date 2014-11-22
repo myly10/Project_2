@@ -26,7 +26,7 @@ public class PermMain{
 			try{
 				Path p=spm.getPath(t);
 				time=System.currentTimeMillis()-time;
-				System.out.println("Time: "+p.time+"min\nInterchange: "+p.interchange+"\nRoute: "+p.routes.size());
+				System.out.println("\nTime: "+p.time+"min\nInterchange: "+p.interchange+"\nRoute: "+p.routes.size());
 				for (Route i : p.routes) System.out.println(i+stations.get(stations.size()-1));
 				System.out.println("Finished in "+time+"ms.");
 			}catch (StationNotFoundException ex){
