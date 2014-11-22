@@ -71,7 +71,7 @@ public class SPMap{
 			preTimeCount+=getPath(stations[i-1], stations[i]).time;
 		if (preTimeCount>multiBest.time) return null;
 		for (int i=2;i!=stations.length;++i){
-			t=t.appendNew(getPath(stations[i-1], stations[i]));
+			t=t.appendNew(getPath(stations[i-1], stations[i]), stations[i-1]);
 		}
 		if (t.time<multiBest.time || (t.time==multiBest.time && t.interchange<multiBest.interchange)){
 			multiBest=t;

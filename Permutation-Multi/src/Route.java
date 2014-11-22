@@ -5,8 +5,8 @@ public class Route{
 		this.route=route;
 	}
 
-	public Route(Route x, Route y){
-		route=x.toString()+y;
+	public Route(Route x, Route y, String middleStationName){
+		route=x.toString()+middleStationName+"（下车）"+y;
 	}
 
 	@Override

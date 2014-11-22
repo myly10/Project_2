@@ -63,21 +63,30 @@ public class SPMap{
 		for (int state=3, limit=(1<<(stationCount-1))-1;state<limit;state+=2)
 			for (int p=findNextTrueBit(state, 0);p<stationCount-1;p=findNextTrueBit(state, p))
 				for (int exit=findNextFalseBit(state, 0);exit<stationCount-1;exit=findNextFalseBit(state, exit)){
-					if (((state|(1<<exit))>>1)>limit) continue;
-					if (dp[(state|(1<<exit))>>1][exit]==null ||
-								dp[(state|(1<<exit))>>1][exit].time>dp[state>>1][p].time+path[stationIndexToNum[p]][stationIndexToNum[exit]].time)
-						dp[(state|(1<<exit))>>1][exit]=connect(dp[state>>1][p], path[stationIndexToNum[p]][stationIndexToNum[exit]]);
-					else if (dp[(state|(1<<exit))>>1][exit].time==dp[state>>1][p].time+path[stationIndexToNum[p]][stationIndexToNum[exit]].time)
-						dp[(state|(1<<exit))>>1][exit].routes.addAll(connect(dp[state>>1][p], path[stationIndexToNum[p]][stationIndexToNum[exit]]).routes);
+					int nextState=(state|(1<<exit));
+					if (nextState>limit) continue;
+					if (dp[nextState>>1][exit]==null ||
+								dp[nextState>>1][exit].time>dp[state>>1][p].time+path[stationIndexToNum[p]][stationIndexToNum[exit]].time)
+						dp[nextState>>1][exit]=connect(dp[state>>1][p], path[stationIndexToNum[p]][stationIndexToNum[exit]], stations[p]);
+					else if (dp[nextState>>1][exit].time==dp[state>>1][p].time+path[stationIndexToNum[p]][stationIndexToNum[exit]].time){
+						if (dp[nextState>>1][exit].interchange>dp[state>>1][p].interchange+path[stationIndexToNum[p]][stationIndexToNum[exit]].interchange+1)
+							dp[nextState>>1][exit]=connect(dp[state>>1][p],path[stationIndexToNum[p]][stationIndexToNum[exit]], stations[p]);
+						else if (dp[nextState>>1][exit].interchange==dp[state>>1][p].interchange+path[stationIndexToNum[p]][stationIndexToNum[exit]].interchange+1)
+							dp[nextState>>1][exit].routes.addAll(connect(dp[state>>1][p], path[stationIndexToNum[p]][stationIndexToNum[exit]], stations[p]).routes);
+					}
 				}
 		final int exit=stationCount-1, prev=(1<<(stationCount-2))-1;
 		Path result=null;
 		for (int i=1;i!=stationCount-1;++i){
 			if (result==null ||
 						result.time>dp[prev][i].time+path[stationIndexToNum[i]][stationIndexToNum[exit]].time)
-				result=connect(dp[prev][i], path[stationIndexToNum[i]][stationIndexToNum[exit]]);
-			else if (result.time==dp[prev][i].time+path[stationIndexToNum[i]][stationIndexToNum[exit]].time)
-				result.routes.addAll(connect(dp[prev][i], path[stationIndexToNum[i]][stationIndexToNum[exit]]).routes);
+				result=connect(dp[prev][i], path[stationIndexToNum[i]][stationIndexToNum[exit]], stations[i]);
+			else if (result.time==dp[prev][i].time+path[stationIndexToNum[i]][stationIndexToNum[exit]].time){
+				if (result.interchange>dp[prev][i].interchange+path[stationIndexToNum[i]][stationIndexToNum[exit]].interchange+1)
+					result=connect(dp[prev][i],path[stationIndexToNum[i]][stationIndexToNum[exit]], stations[i]);
+				else if (result.interchange==dp[prev][i].interchange+path[stationIndexToNum[i]][stationIndexToNum[exit]].interchange+1)
+					result.routes.addAll(connect(dp[prev][i],path[stationIndexToNum[i]][stationIndexToNum[exit]], stations[i]).routes);
+			}
 		}
 		System.gc();
 		return result;
@@ -103,13 +112,13 @@ public class SPMap{
 		return Integer.MAX_VALUE;
 	}
 
-	public Path connect(Path p, Path n){
+	public Path connect(Path p, Path n, String middleStationName){
 		Path t=new Path();
 		t.interchange=p.interchange+n.interchange+1;
 		t.time=n.time+p.time;
 		for (Route i : p.routes)
 			for (Route j : n.routes)
-				t.routes.add(new Route(i, j));
+				t.routes.add(new Route(i, j, middleStationName));
 		return t;
 	}
 }

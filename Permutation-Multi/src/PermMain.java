@@ -6,7 +6,7 @@ import java.util.Vector;
 public class PermMain{
 	public static void main(String[] args) throws FileNotFoundException{
 		//System.out.print("Initializing database...");
-		long time=System.currentTimeMillis();
+		long time;//=System.currentTimeMillis();
 		System.out.print("Stations > ");
 		File db=new File("SPMap.db");
 		SPMap spm=new SPMap(db);
@@ -26,7 +26,7 @@ public class PermMain{
 			try{
 				Path p=spm.getPath(t);
 				time=System.currentTimeMillis()-time;
-				System.out.println("Time: "+p.time+"min\nInterchange: "+p.interchange+"\nRoute: ");
+				System.out.println("Time: "+p.time+"min\nInterchange: "+p.interchange+"\nRoute: "+p.routes.size());
 				for (Route i : p.routes) System.out.println(i+stations.get(stations.size()-1));
 				System.out.println("Finished in "+time+"ms.");
 			}catch (StationNotFoundException ex){
